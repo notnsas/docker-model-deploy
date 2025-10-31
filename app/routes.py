@@ -49,6 +49,7 @@ def upload_file():
     if request.method == 'POST':
         button_value = request.form.get('action')
         if button_value == "Upload":
+            print('ada uploud')
             # check if the post request has the file part
             if 'file' not in request.files:
                 flash('No file part')
