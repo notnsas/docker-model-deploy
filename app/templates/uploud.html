@@ -1,0 +1,22 @@
+{% extends "base.html" %}
+
+{% block content %}
+<title>Upload new File</title>
+<h1>Upload new File</h1>
+<form method=post enctype=multipart/form-data>
+    <input type=file name=file>
+    <input type=submit name="action" value=Upload>
+</form>
+<hr>
+<form action="" method="post" novalidate>
+    <label>Sepal Length: <input type="number" step="0.1" name="sepal_length" required></label><br>
+    <label>Sepal Width: <input type="number" step="0.1" name="sepal_width" required></label><br>
+    <label>Petal Length: <input type="number" step="0.1" name="petal_length" required></label><br>
+    <label>Petal Width: <input type="number" step="0.1" name="petal_width" required></label><br>
+    <button type="submit" name="action" value="submit">Predict</button>
+</form>
+{% if pred_class %}
+    <p>The predicted value is : {{ pred_class }}</p>
+{% endif %}
+
+{% endblock %}

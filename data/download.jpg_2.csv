@@ -1,0 +1,13 @@
+Gejara 1;Gejata_2;Gejata_3;Gejata_4;Diagnosis;Prediksi
+0;2;1;0;Normal;Normal
+1;1;2;1;Diabetes;Normal
+2;2;1;0;Diabetes;Diabetes
+1;1;0;0;Normal;Diabetes
+0;2;0;0;Normal;Diabetes
+1;2;1;1;Diabetes;Diabetes
+1;1;2;0;Normal;Normal
+2;1;1;1;Diabetes;Diabetes
+1;0;0;1;Diabetes;Diabetes
+0;0;0;0;Normal;Normal
+0;1;1;0;Normal;Diabetes
+1;2;1;1;Normal;Normal
