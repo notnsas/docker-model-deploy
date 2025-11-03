@@ -1,6 +1,9 @@
 {% extends "base.html" %}
 
 {% block content %}
+<!-- <head>
+    <link href="app/static/css/output.css" rel="stylesheet">
+</head> -->
 <title>Upload new File</title>
 <h1>Upload new File</h1>
 <form method=post enctype=multipart/form-data>
@@ -8,15 +11,29 @@
     <input type=submit name="action" value=Upload>
 </form>
 <hr>
-<form action="" method="post" novalidate>
-    <label>Sepal Length: <input type="number" step="0.1" name="sepal_length" required></label><br>
-    <label>Sepal Width: <input type="number" step="0.1" name="sepal_width" required></label><br>
-    <label>Petal Length: <input type="number" step="0.1" name="petal_length" required></label><br>
-    <label>Petal Width: <input type="number" step="0.1" name="petal_width" required></label><br>
-    <button type="submit" name="action" value="submit">Predict</button>
+<div class="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
+    <form class="py-4 px-6" action="" method="post" novalidate>
+        <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2">Sepal Length: <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" step="0.1" name="sepal_length" required></label><br>
+        </div>
+        <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2">Sepal Width: <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" step="0.1" name="sepal_width" required></label><br>
+        </div>
+        <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2">Petal Length: <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" step="0.1" name="petal_length" required></label><br>
+        </div>
+        <div class="mb-4">
+        <label class="block text-gray-700 font-bold mb-2">Petal Width: <input class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" type="number" step="0.1" name="petal_width" required></label><br>
+        </div>
+        <div class="flex items-center justify-center mb-4">
+        <button class="bg-gray-900 text-white py-2 px-4 rounded hover:bg-gray-800 focus:outline-none focus:shadow-outline" type="submit" name="action" value="submit">Predict</button>
+        </div>
+</div>
 </form>
 {% if pred_class %}
-    <p>The predicted value is : {{ pred_class }}</p>
+<div class="shadow-lg rounded-lg max-w-md flex items-center justify-center mx-auto mb-4 mt-5 bg-gray-900 p-2">
+    <p class="shadow block text-gray-700 font-bold mb-2 text-white">The predicted value is : {{ pred_class }}</p>
+</div>
 {% endif %}
 
 {% endblock %}
