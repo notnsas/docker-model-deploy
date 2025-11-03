@@ -25,7 +25,7 @@ def prediction():
     model = joblib.load('ml_model/random_forest_iris.pkl')
 
     df = pd.read_csv(file_path)
-    print('bisa geng++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++')
+    
     # 2. Separate features and target
     X = df.drop("target", axis=1).values  
     y = df["target"]
