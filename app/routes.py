@@ -55,6 +55,7 @@ def upload_file():
                 flash('No file part')
                 return redirect(request.url)
             file = request.files['file']
+            print('file udh bs')
             # If the user does not select a file, the browser submits an
             # empty file without a filename.
             if file.filename == '':
