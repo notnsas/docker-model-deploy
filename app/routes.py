@@ -13,6 +13,17 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
+def inference(file_path):
+    model = joblib.load('ml_model/random_forest_iris.pkl')
+
+    df = pd.read_csv(file_path)
+    
+    X = df.drop("target", axis=1).values  
+    y = df["target"]
+
+    df["predicted"] = model.predict(X)
+    return df
+
 @app.route('/uploads/<name>')
 def download_file(name):
     return send_from_directory(app.config["UPLOAD_FOLDER"], name)
@@ -22,23 +33,13 @@ def prediction():
     file = request.args.get('file')
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], file)
     
-    model = joblib.load('ml_model/random_forest_iris.pkl')
-
-    df = pd.read_csv(file_path)
-    
-    # 2. Separate features and target
-    X = df.drop("target", axis=1).values  
-    y = df["target"]
-
-    # 4. Predict on the same data (or any new data)
-    predictions = model.predict(X)
-
-    # 5. Add predictions to DataFrame
-    df["predicted"] = predictions
+    df = inference(file_path)
 
     # Optional: save predictions
     df.to_excel("data/iris_with_predictions.xlsx", index=False)
     filename = secure_filename("data/iris_with_predictions.csv")
+    download_file(name="iris_with_predictions.xlsx")
+
     return redirect(url_for('download_file', name="iris_with_predictions.xlsx"))
 
     # return render_template('prediction.html')
@@ -66,6 +67,7 @@ def upload_file():
                 print(app.config['UPLOAD_FOLDER'])
                 file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
                 return redirect(url_for('prediction', file=filename))
+                # prediction(file=filename)
         
         if button_value == "submit":
             sepal_length = float(request.form["sepal_length"])
