@@ -1,4 +1,4 @@
-from flask import render_template, flash, redirect, url_for, send_from_directory, request
+from flask import render_template, flash, redirect, url_for, send_from_directory, request, jsonify
 from app import app, ALLOWED_EXTENSIONS
 from app.forms import LoginForm
 from werkzeug.utils import secure_filename
@@ -13,16 +13,45 @@ def allowed_file(filename):
     return '.' in filename and \
            filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-def inference(file_path):
+def inference(data):
     model = joblib.load('ml_model/random_forest_iris.pkl')
 
-    df = pd.read_csv(file_path)
-    
-    X = df.drop("target", axis=1).values  
-    y = df["target"]
+    if isinstance(data, np.ndarray):
+        X = data
+        return model.predict(X)[0]
+    else:
+        df = pd.read_csv(data)
+        
+        X = df.drop("target", axis=1).values  
+        y = df["target"]
 
-    df["predicted"] = model.predict(X)
-    return df
+        df["predicted"] = model.predict(X)
+        return df
+    return None
+
+@app.route('/api/prediction', methods=['POST'])
+def api_prediction():
+    print('test')
+    data = request.json
+    sepal_length = float(data.get('sepal_length'))
+    sepal_width = float(data.get('sepal_width'))
+    petal_length = float(data.get('petal_length'))
+    petal_width = float(data.get('petal_width'))
+
+    # 3. Run the model
+    features = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
+    pred_class_num = inference(features)
+    
+    # 4. Map the result
+    species_map = {0: "setosa", 1: "versicolor", 2: "virginica"}
+    pred_class = species_map.get(pred_class_num, "Unknown")
+    
+    print(f"Prediction: {pred_class}") # This prints to your CMD
+
+    # 5. THE FIX: Send JSON back to the JavaScript
+    return jsonify({
+        'prediction': pred_class
+    })
 
 @app.route('/uploads/<name>')
 def download_file(name):
@@ -35,14 +64,12 @@ def prediction():
     
     df = inference(file_path)
 
-    # Optional: save predictions
     df.to_excel("data/iris_with_predictions.xlsx", index=False)
     filename = secure_filename("data/iris_with_predictions.csv")
     download_file(name="iris_with_predictions.xlsx")
 
     return redirect(url_for('download_file', name="iris_with_predictions.xlsx"))
 
-    # return render_template('prediction.html')
 
 @app.route('/', methods=['GET', 'POST'])
 def upload_file():
@@ -70,14 +97,18 @@ def upload_file():
                 # prediction(file=filename)
         
         if button_value == "submit":
-            sepal_length = float(request.form["sepal_length"])
-            sepal_width = float(request.form["sepal_width"])
-            petal_length = float(request.form["petal_length"])
-            petal_width = float(request.form["petal_width"])
-            model = joblib.load('ml_model/random_forest_iris.pkl')
-            features = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
-            pred_class_num = model.predict(features)[0]
+            data = request.json
 
+            sepal_length = float(data.get('sepal_length'))
+            sepal_width = float(data.get('sepal_width'))
+            petal_length = float(data.get('petal_length'))
+            petal_width = float(data.get('petal_width'))
+
+            print(f"sepal_length : {sepal_length}")
+            # model = joblib.load('ml_model/random_forest_iris.pkl')
+            features = np.array([[sepal_length, sepal_width, petal_length, petal_width]])
+            # pred_class_num = model.predict(features)
+            pred_class_num = inference(features)
             species_map = {0: "setosa", 1: "versicolor", 2: "virginica"}
             pred_class = species_map.get(pred_class_num, "Unknown")
 

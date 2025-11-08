@@ -23,8 +23,9 @@
       type=submit name="action" value=Upload>
   </form>
 </div>
+
 <div class="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
-  <form class="py-4 px-6" action="" method="POST" novalidate>
+  <form class="py-4 px-6" action="" method="POST" id="my-form" novalidate>
     <div class="mb-4">
       <label class="block text-gray-700 font-bold mb-2">Sepal Length: <input
           class="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -51,11 +52,60 @@
     </div>
 </div>
 </form>
-{% if pred_class %}
+<script>
+  // Wait for the entire page to load
+  document.addEventListener('DOMContentLoaded', () => {
+
+    // 1. Find your form element by its ID
+    const myForm = document.getElementById('my-form');
+
+    // 2. Add an event listener for the "submit" event
+    myForm.addEventListener('submit', (event) => {
+      const formData = new FormData(myForm);
+      // 3. IMPORTANT: Stop the form from refreshing the page
+      event.preventDefault();
+
+      // 4. Now you can get the data from the form
+      const data = Object.fromEntries(formData.entries());
+
+      console.log("Sending this data to server:", data);
+
+      // 5. Do whatever you want with the data!
+      console.log('The form was submitted!');
+      // console.log('Username:', username);
+      fetch('/api/prediction', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      })
+      .then(response => response.json())
+        .then(result => {
+          // 'result' is the JSON from Flask: {'prediction': 'setosa'}
+          console.log('Server responded:', result.prediction);
+
+          // THE FIX: Find the <p> tag and update it
+          const resultElement = document.getElementById('prediction-result');
+          resultElement.innerHTML = result.prediction;
+
+        })
+        .catch(error => {
+          console.error('Error:', error);
+          const resultElement = document.getElementById('prediction-result');
+          resultElement.innerHTML = "Error during prediction.";
+        });
+    });
+  });;
+  // You could now send this data to your server using fetch()  
+  // fetch('/api/your-endpoint', { method: 'POST', body: formData });
+
+
+
+</script>
+<!-- {% if pred_class %} -->
 <div class="shadow-lg rounded-lg max-w-md flex items-center justify-center mx-auto mb-4 mt-5 bg-gray-900 p-2">
-  <p class="shadow block text-gray-700 font-bold mb-2 text-white">The predicted value is <span
-      class="text-center bg-white text-black block rounded pd-2 ml-10 mr-10">{{ pred_class }}</span></p>
+  <p class="shadow block text-gray-700 font-bold mb-2 text-white">The predicted value is <span id="prediction-result"
+      class="text-center bg-white text-black block rounded pd-2 ml-10 mr-10"></span></p>
 </div>
-{% endif %}
+<!-- {% endif %} -->
 
 {% endblock %}
