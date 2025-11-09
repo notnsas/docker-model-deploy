@@ -46,7 +46,7 @@ import imblearn
 
 dataframes = {}
 
-pipeline = joblib.load("ml_model/logistic_regression.joblib")
+pipeline = joblib.load("ml_model/logistic_regression_inference.joblib")
 
 
 def allowed_file(filename):
@@ -70,7 +70,7 @@ def inference(data):
         else:
             X = data
         print("after")
-        data["is_fraud"] = pipeline.predict(X)
+        data["is_fraud_prediction"] = pipeline.predict(X)
         return data
 
 
@@ -263,6 +263,17 @@ def upload_file():
                 for i, df in enumerate(dataframes, 1):
                     print(f"\nTable {i}:\n", df)
 
+        if "delete" in request.form:
+            table_num = int(request.form.get("table_num"))
+            del dataframes[f"table_{table_num}"]
+
+            # Reindex subsequent tables
+            max_index = len(dataframes) + 1  # +1 because we just deleted one
+            for i in range(table_num + 1, max_index + 1):
+                old_key = f"table_{i}"
+                new_key = f"table_{i - 1}"
+                if old_key in dataframes:
+                    dataframes[new_key] = dataframes.pop(old_key)
         if "action" in request.form:
             preprocess = Preprocess(dataframes)
             df_concat = preprocess.preprocessing()
