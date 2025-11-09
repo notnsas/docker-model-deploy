@@ -4,6 +4,17 @@ import sqlalchemy as sa
 import sqlalchemy.orm as so
 from app import db
 
+class Fraud(db.Model):
+    id: so.Mapped[int] = so.mapped_column(primary_key=True)
+    amount: so.Mapped[Optional[float]] = so.mapped_column(sa.Float(64)
+                                                )
+    location: so.Mapped[Optional[str]] = so.mapped_column(sa.String(120)
+                                                )
+    is_fraud: so.Mapped[Optional[int]] = so.mapped_column(sa.Integer)
+
+    def __repr__(self):
+        return '<User is{}'.format(self.username)
+    
 class User(db.Model):
     id: so.Mapped[int] = so.mapped_column(primary_key=True)
     username: so.Mapped[str] = so.mapped_column(sa.String(64), index=True,

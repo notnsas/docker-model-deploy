@@ -10,9 +10,13 @@ ALLOWED_EXTENSIONS = {'csv', 'xlsx'}
 
 app = Flask(__name__)
 
-from app import routes
+# from app import routes
 app.config.from_object(Config)
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
+
 from app import routes, models
+with app.app_context():
+    db.create_all()
+    

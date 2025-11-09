@@ -6,22 +6,77 @@
 </head> -->
 <title>Upload new File</title>
 <div class="rounded-lg max-w-md mx-auto shadow-lg block flex mb-4 items-center justify-center mt-5 bg-gray-900 p-2">
-  <form class="py-4 px-6 flex-row" method=post enctype=multipart/form-data>
-    <div class="rounded-md border border-indigo-500 bg-gray-50 p-4 shadow-md w-36 mb-3">
-      <label for="upload" class="flex flex-col items-center gap-2 cursor-pointer">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 fill-white stroke-indigo-500" viewBox="0 0 24 24"
-          stroke="currentColor" stroke-width="2">
-          <path stroke-linecap="round" stroke-linejoin="round"
-            d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-        </svg>
-        <span class="text-gray-600 font-medium">Upload file</span>
-      </label>
-      <input type="file" id="upload" name="file" class="hidden" />
-    </div>
-    <input
-      class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
-      type=submit name="action" value=Upload>
+  <!-- <form class="max-w-sm mx-auto flex flex-row" method=post> -->
+  <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
+  <!-- <select id="countries"
+    class="bg-gray-50 border border-gray-300 text-gray-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block w-full p-2.5 dark:bg-gray-700 dark:border-gray-600 dark:placeholder-gray-400 dark:text-white dark:focus:ring-blue-500 dark:focus:border-blue-500">
+    {% for df in dataframes %}
+  <option value="table_{{ loop.index }}">table_{{ loop.index }}</option>
+{% endfor %}
+  </select>
+  <form action="/" method="POST" enctype="multipart/form-data">
+    <input type="file" name="upload" value="Upload" onchange="this.form.submit()">
+    <input name="join" type=submit value="Join">
+  </form> -->
+  {% if dataframes %}
+  {% for name, df in dataframes.items() %}
+  {% set table_num = name | replace('table_', '') %}
+  <select>
+    <option value="{{ name }}">{{ name }}</option>
+    <!-- Add more options or display dataframe info here if needed -->
+  </select>
+
+  <form action="/" method="POST" enctype="multipart/form-data">
+    <input type="file" name="upload" value="table_num" onchange="this.form.submit()">
+    {% for df in df_list %}
+    <select name="join_col">
+      {% for col in df.columns %}
+      <option value="{{ col }}">{{ col }}</option>
+      {% endfor %}
+    </select>
+    {% endfor %}
+    <input name="delete" value="{{table_num}}" type="submit">
   </form>
+</div>
+{% endfor %}
+{% else %}
+<select>
+  <option value="{{ name }}">{{ name }}</option>
+  <!-- Add more options or display dataframe info here if needed -->
+</select>
+
+<form action="/" method="POST" enctype="multipart/form-data">
+  <input type="file" name="upload" value="1" onchange="this.form.submit()">
+  <select name="join_col">
+    {% for col in df.columns %}
+    <option value="{{ col }}">{{ col }}</option>
+    {% endfor %}
+  </select>
+  <input name="join" value="{{table_num}}" type="submit">
+  <input name="delete" value="1" type="submit">
+</form>
+</div>
+{% endif %}
+
+
+
+<!-- </form> -->
+<form class="py-4 px-6 flex-row" method=post enctype=multipart/form-data>
+  <div class="rounded-md border border-indigo-500 bg-gray-50 p-4 shadow-md w-36 mb-3">
+    <label for="upload" class="flex flex-col items-center gap-2 cursor-pointer">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 fill-white stroke-indigo-500" viewBox="0 0 24 24"
+        stroke="currentColor" stroke-width="2">
+        <path stroke-linecap="round" stroke-linejoin="round"
+          d="M9 13h6m-3-3v6m5 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+      </svg>
+      <span class="text-gray-600 font-medium">Upload file</span>
+    </label>
+    <input type="file" id="upload" name="file" class="hidden" multiple />
+  </div>
+  <input
+    class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
+    type=submit name="action" value=Upload>
+</form>
 </div>
 
 <div class="max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden">
@@ -78,7 +133,7 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       })
-      .then(response => response.json())
+        .then(response => response.json())
         .then(result => {
           // 'result' is the JSON from Flask: {'prediction': 'setosa'}
           console.log('Server responded:', result.prediction);

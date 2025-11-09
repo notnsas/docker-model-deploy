@@ -1,6 +1,7 @@
 from flask import render_template, flash, redirect, url_for, send_from_directory, request, jsonify
-from app import app, ALLOWED_EXTENSIONS
+from app import app, ALLOWED_EXTENSIONS, db
 from app.forms import LoginForm
+from app.models import Fraud
 from werkzeug.utils import secure_filename
 import os
 import pickle
@@ -8,6 +9,9 @@ import joblib
 from sklearn.ensemble import RandomForestClassifier  # you must import this class
 import pandas as pd
 import numpy as np
+
+
+dataframes = {}
 
 def allowed_file(filename):
     return '.' in filename and \
@@ -76,6 +80,8 @@ def upload_file():
     pred_class = "None"
     if request.method == 'POST':
         button_value = request.form.get('action')
+        join_button = request.form.get('join')
+        print(f"join_button : {join_button}")
         if button_value == "Upload":
             print('ada uploud')
             # check if the post request has the file part
@@ -112,7 +118,55 @@ def upload_file():
             species_map = {0: "setosa", 1: "versicolor", 2: "virginica"}
             pred_class = species_map.get(pred_class_num, "Unknown")
 
-    return render_template('uploud.html', pred_class=pred_class)
+
+        # df1 = pd.DataFrame({
+        #     "location": ["Alice", "Bob", "Charlie"],
+        #     "amount": [10, 10.1, 2.5],
+        #     "fraud": [1, 0, 1],
+        #     "email": ["a@x.com", "b@x.com", "c@x.com"]
+        # })
+
+        # # 2️⃣ Second table
+        # df2 = pd.DataFrame({
+        #     "email": ["a@x.com", "b@x.com", "c@x.com"],
+        #     "amt": [100, 200, 150]
+        # })
+
+        # # Add both to list
+        # dataframes.append([df1, df2])
+        print('gurt1')
+        print(f'df : {dataframes}')
+        file = request.files['upload']
+        if file:
+            num_table = request.form.get('upload')
+            print(f'gurt : {file}')
+            
+            if 'upload' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            # file = request.files['upload']
+            print('file udh bs')
+            # If the user does not select a file, the browser submits an
+            # empty file without a filename.
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                df = pd.read_csv(file)
+                table_index = f'table_{num_table}'
+                if table_index not in dataframes:
+                    dataframes[table_index] = [df]
+                else:
+                    dataframes[table_index].extend(df)
+                # print(f"df : P{dataframes}")
+                # ✅ Verify
+                for i, df in enumerate(dataframes, 1):
+                    print(f"\nTable {i}:\n", df)
+        # if join_button == "Join":
+            
+
+
+    return render_template('uploud.html', pred_class=pred_class, dataframes=dataframes)
 
 
 @app.route('/index')
