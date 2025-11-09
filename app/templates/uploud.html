@@ -23,7 +23,7 @@
   {% for name, df_list in dataframes.items() %}
   {% set table_num = name | replace('table_', '') %}
 
-  <div class="table-container" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px;">
+  <div class="table-container max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px;">
 
     <h3>Table {{ table_num }}</h3>
 
@@ -80,7 +80,7 @@
     <input type="file" name="upload_table" onchange="this.form.submit()">
   </form>
   {% else %}
-  <div class="table-container">
+  <div class="table-container max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden"">
     <h3>No tables found.</h3>
     <p>Upload a file to create your first table.</p>
     <form action="/" method="POST" enctype="multipart/form-data">
