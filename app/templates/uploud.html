@@ -6,6 +6,7 @@
 </head> -->
 <title>Upload new File</title>
 <div class="rounded-lg mx-auto shadow-lg block flex flex-wrap mb-4 items-center justify-center mt-5 bg-gray-900 p-2">
+ 
   <!-- <form class="max-w-sm mx-auto flex flex-row" method=post> -->
   <label for="countries" class="block mb-2 text-sm font-medium text-gray-900 dark:text-white">Select an option</label>
   <!-- <select id="countries"
@@ -18,75 +19,86 @@
     <input type="file" name="upload" value="Upload" onchange="this.form.submit()">
     <input name="join" type=submit value="Join">
   </form> -->
-{% if dataframes and dataframes|length > 0 %}
-    {% for name, df_list in dataframes.items() %}
-        {% set table_num = name | replace('table_', '') %}
-        
-        <div class="table-container" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px;">
-            
-            <h3>Table {{ table_num }}</h3>
-            
-            <label for="df_select_{{ table_num }}">DataFrames in this table:</label>
-            <select id="df_select_{{ table_num }}" name="selected_dataframe">
-                {% for i in range(df_list|length) %}
-                    <option value="dataframe{{ loop.index }}">DataFrame {{ loop.index }}</option>
-                {% endfor %}
-            </select>
-            
-            <hr>
+  {% if dataframes and dataframes|length > 0 %}
+  {% for name, df_list in dataframes.items() %}
+  {% set table_num = name | replace('table_', '') %}
 
-            <form action="/" method="POST" enctype="multipart/form-data">
-                <input type="hidden" name="table_num" value="{{ table_num }}">
+  <div class="table-container" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px;">
 
-                <strong>Add another DataFrame to Table {{ table_num }}:</strong>
-                <input type="file" name="upload" onchange="this.form.submit()">
-                
-                <hr>
+    <h3>Table {{ table_num }}</h3>
 
-                <h4>Join Configuration</h4>
-                <p>Select a join column from each DataFrame:</p>
-                
-                {% for df in df_list %}
-                    <div class="join-selector" style="margin-bottom: 5px;">
-                        <label>DataFrame {{ loop.index }}: </label>
-                        <select name="join_col_{{ loop.index }}">
-                            {% for col in df.columns %}
-                                <option value="{{ col }}">{{ col }}</option>
-                            {% endfor %}
-                        </select>
-                    </div>
-                {% endfor %}
-                
-                <input name="submit_join" value="Set Join Columns" type="submit" style="margin-top: 10px;">
-                
-                <hr>
+    <label for="df_select_{{ table_num }}">DataFrames in this table:</label>
+    <select id="df_select_{{ table_num }}" name="selected_dataframe">
+      {% for i in range(df_list|length) %}
+      <option value="dataframe{{ loop.index }}">DataFrame {{ loop.index }}</option>
+      {% endfor %}
+    </select>
 
-                <input name="delete" value="Delete Table {{ table_num }}" type="submit" style="color: red; background: #fee;">
-            </form>
-        </div>
-    {% endfor %}
-<form action="{{url_for('upload_file')}}" method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
+    <hr>
+
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="table_num" value="{{ table_num }}">
+
+      <strong>Add another DataFrame to Table {{ table_num }}:</strong>
+      <input type="file" name="upload" onchange="this.form.submit()">
+    </form>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="table_num" value="{{ table_num }}">
+
+      <!-- <strong>Add another DataFrame to Table {{ table_num }}:</strong>
+      <input type="file" name="upload_another" onchange="this.form.submit()">  -->
+
+      <hr>
+
+      <h4>Join Configuration</h4>
+      <p>Select a join column from each DataFrame:</p>
+
+      {% for df in df_list %}
+      <div class="join-selector" style="margin-bottom: 5px;">
+        <label>DataFrame {{ loop.index }}: </label>
+        <select name="join_col_{{ loop.index }}">
+          {% for col in df.columns %}
+          <option value="{{ col }}">{{ col }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      {% endfor %}
+
+      <input name="submit_join" value="Set Join Columns" type="submit" style="margin-top: 10px;">
+
+      <hr>
+
+      <input name="delete" value="Delete Table {{ table_num }}" type="submit" style="color: red; background: #fee;">
+    </form>
+  </div>
+  {% endfor %}
+  <!-- <form action=method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
     <input name="add_table" value="Add New Table" type="submit">
-</form>
-{% else %}
-    <div class="table-container">
-        <h3>No tables found.</h3>
-        <p>Upload a file to create your first table.</p>
-        <form action="/" method="POST" enctype="multipart/form-data">
-            <input type="hidden" name="table_num" value="1">
-            <input type="file" name="upload" onchange="this.form.submit()">
-        </form>
-    </div>
-{% endif %}
+  </form> -->
+  <form action="/" method="POST" enctype="multipart/form-data">
+    <!-- <input type="hidden" name="add_table" value="1"> -->
+    <input type="file" name="upload_table" onchange="this.form.submit()">
+  </form>
+  {% else %}
+  <div class="table-container">
+    <h3>No tables found.</h3>
+    <p>Upload a file to create your first table.</p>
+    <form action="/" method="POST" enctype="multipart/form-data">
+      <input type="hidden" name="table_num" value="1">
+      <input type="file" name="upload" onchange="this.form.submit()">
+    </form>
+  </div>
+  {% endif %}
+   <form action="/" method="POST">
+  <div>
+    <input
+      class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
+      type=submit name="action" value=Upload>
+  </div>
+  </form>
 
-<div>
-  <input
-    class="hover:shadow-form w-full rounded-md bg-[#6A64F1] py-3 px-8 text-center text-base font-semibold text-white outline-none"
-    type=submit name="action" value=Upload>
-</div>
-
-<!-- </form> -->
-<!-- <form class="py-4 px-6 flex-row" method=post enctype=multipart/form-data>
+  <!-- </form> -->
+  <!-- <form class="py-4 px-6 flex-row" method=post enctype=multipart/form-data>
   <div class="rounded-md border border-indigo-500 bg-gray-50 p-4 shadow-md w-36 mb-3">
     <label for="upload" class="flex flex-col items-center gap-2 cursor-pointer">
       <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10 fill-white stroke-indigo-500" viewBox="0 0 24 24"

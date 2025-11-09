@@ -9,7 +9,7 @@ import joblib
 from sklearn.ensemble import RandomForestClassifier  # you must import this class
 import pandas as pd
 import numpy as np
-import functools as ft
+import functools as ft, reduce
 
 dataframes = {}
 
@@ -79,28 +79,30 @@ def prediction():
 def upload_file():
     pred_class = "None"
     if request.method == 'POST':
+        print(f"request.form: {request.form}")
+        print(f"request.files: {request.files}")
         button_value = request.form.get('action')
         join_button = request.form.get('join')
         print(f"join_button : {join_button}")
-        if button_value == "Upload":
-            print('ada uploud')
-            # check if the post request has the file part
-            if 'file' not in request.files:
-                flash('No file part')
-                return redirect(request.url)
-            file = request.files['file']
-            print('file udh bs')
-            # If the user does not select a file, the browser submits an
-            # empty file without a filename.
-            if file.filename == '':
-                flash('No selected file')
-                return redirect(request.url)
-            if file and allowed_file(file.filename):
-                filename = secure_filename(file.filename)
-                print(app.config['UPLOAD_FOLDER'])
-                file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-                return redirect(url_for('prediction', file=filename))
-                # prediction(file=filename)
+        # if button_value == "Upload":
+        #     print('ada uploud')
+        #     # check if the post request has the file part
+        #     if 'file' not in request.files:
+        #         flash('No file part')
+        #         return redirect(request.url)
+        #     file = request.files['file']
+        #     print('file udh bs')
+        #     # If the user does not select a file, the browser submits an
+        #     # empty file without a filename.
+        #     if file.filename == '':
+        #         flash('No selected file')
+        #         return redirect(request.url)
+        #     if file and allowed_file(file.filename):
+        #         filename = secure_filename(file.filename)
+        #         print(app.config['UPLOAD_FOLDER'])
+        #         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
+        #         return redirect(url_for('prediction', file=filename))
+        #         # prediction(file=filename)
         
         if button_value == "submit":
             data = request.json
@@ -119,23 +121,8 @@ def upload_file():
             pred_class = species_map.get(pred_class_num, "Unknown")
 
 
-        # df1 = pd.DataFrame({
-        #     "location": ["Alice", "Bob", "Charlie"],
-        #     "amount": [10, 10.1, 2.5],
-        #     "fraud": [1, 0, 1],
-        #     "email": ["a@x.com", "b@x.com", "c@x.com"]
-        # })
-
-        # # 2️⃣ Second table
-        # df2 = pd.DataFrame({
-        #     "email": ["a@x.com", "b@x.com", "c@x.com"],
-        #     "amt": [100, 200, 150]
-        # })
-
-        # # Add both to list
-        # dataframes.append([df1, df2])
         print('gurt1')
-        print(f'df : {dataframes}')
+        # print(f'df : {dataframes}')
         
         if 'upload' in request.files: 
             file = request.files['upload']
@@ -148,10 +135,6 @@ def upload_file():
             if 'upload' not in request.files:
                 flash('No file part')
                 return redirect(request.url)
-            # file = request.files['upload']
-            print('file udh bs')
-            # If the user does not select a file, the browser submits an
-            # empty file without a filename.
             if file.filename == '':
                 flash('No selected file')
                 return redirect(request.url)
@@ -162,42 +145,27 @@ def upload_file():
                     dataframes[table_index] = [df]
                 else:
                     dataframes[table_index].append(df)
-                # print(f"df : P{dataframes}")
-                # ✅ Verify
                 for i, df in enumerate(dataframes, 1):
                     print(f"\nTable {i}:\n", df)
+
         # if join_button == "Join":
+        print(f"len table 1 dataframes: {len(dataframes['table_1'])}")
+        print(f"request.form: {request.form}")
         if 'submit_join' in request.form:
             # Get which table this form was for
             table_num = request.form.get('table_num')
 
-            # 1. Use a dictionary to collect the column names
-            #    This helps keep them in order (e.g., {1: 'col_A', 2: 'col_B'})
             join_col_data = {}
 
-            # 2. Loop through all items in the submitted form
             for key, value in request.form.items():
-                
-                # 3. Check if the key is one of your join columns
                 if key.startswith('join_col_'):
-                    
-                    # 4. Extract the number from the key
-                    #    'join_col_1' -> '1' -> 1
                     index = int(key.split('_')[-1])
-                    
-                    # 5. Store the column name (the 'value')
                     join_col_data[index] = value
 
-            # 6. Sort the dictionary by its keys (1, 2, 3...)
-            #    and create a clean, ordered list of the column names
             sorted_join_cols = [join_col_data[k] for k in sorted(join_col_data.keys())]
 
-            # --- Now you have your list! ---
             print(f"User wants to join Table {table_num}")
             print(f"Selected columns in order: {sorted_join_cols}")
-            # Source - https://stackoverflow.com/a
-# Posted by Kit, modified by community. See post 'Timeline' for change history
-# Retrieved 2025-11-09, License - CC BY-SA 4.0
 
             standard_name = sorted_join_cols[0]  # or choose whichever name you want to use consistently
 
@@ -207,23 +175,60 @@ def upload_file():
 
             # Then merge them
             df_final = ft.reduce(lambda left, right: pd.merge(left, right, on=standard_name), dataframes[f'table_{table_num}'])
-            # Aggregasi transaction amount
-            # df2_agg = df2_2.groupby('customerEmail', as_index=False)['transactionAmount'].sum()
 
             dataframes[f'table_{table_num}'] = [df_final]
-            # # join
-            # df2 = df2.merge(df2_agg[['transactionAmount', 'customerEmail']], on='customerEmail', how='left')
-            # df2
             print(df_final.head())
-            # Example output:
-            # Selected columns in order: ['user_id', 'id', 'customer_key']
-            
-            # You can now pass this list to your merge/join function
-            # e.g., merged_df = perform_join(dataframes[table_num], sorted_join_cols)
-        # if 'action' in request.form:
 
-        if 'add_table' in request.form:
-            print('bababoi')
+        if 'upload_table' in request.files:
+            print('after upload')
+            file = request.files['upload_table']
+            print('after upload')
+            num_table = len(dataframes) + 1
+            print(f"[INFO] Uploaded table value: {num_table}")
+            
+            if 'upload_table' not in request.files:
+                flash('No file part')
+                return redirect(request.url)
+            if file.filename == '':
+                flash('No selected file')
+                return redirect(request.url)
+            if file and allowed_file(file.filename):
+                df = pd.read_csv(file)
+                table_index = f'table_{num_table}'
+                if table_index not in dataframes:
+                    dataframes[table_index] = [df]
+                else:
+                    dataframes[table_index].append(df)
+                for i, df in enumerate(dataframes, 1):
+                    print(f"\nTable {i}:\n", df)
+        
+        if 'action' in request.form:
+            column_mapping = {
+                'Amount': 'amount',
+                'transactionAmount': 'amount',
+                'amt': 'amount',
+                'Location': 'location',
+                'StateName': 'location',
+                'state': 'location',
+                'IsFraud': 'is_fraud',
+                'Fraud': 'is_fraud',
+                'Fraudulent': 'is_fraud'
+            }
+            # Rename columns in each dataframe inside the dictionary
+            for table_name, df_list in dataframes.items():
+                for i, df in enumerate(df_list):
+                    df_list[i] = df.rename(columns=column_mapping)
+            
+            # Flatten all dataframes into a single list
+            all_dfs = [df for dfs in dataframes.values() for df in dfs]
+
+            df_concat = pd.concat(all_dfs, ignore_index=True)
+            print(f'hasil omegad dan len concat: {len(df_concat)}')
+            # Print length of each dataframe
+            for table_name, df_list in dataframes.items():
+                for i, df in enumerate(df_list):
+                    print(f"{table_name}[{i}] length: {len(df)}")
+            print(df_concat.head())
 
     return render_template('uploud.html', pred_class=pred_class, dataframes=dataframes)
 
