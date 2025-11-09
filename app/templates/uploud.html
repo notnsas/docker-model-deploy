@@ -18,8 +18,8 @@
     <input type="file" name="upload" value="Upload" onchange="this.form.submit()">
     <input name="join" type=submit value="Join">
   </form> -->
-  {% if dataframes %}
-  {% for name, df in dataframes.items() %}
+{% if dataframes and dataframes|length > 0 %}
+  {% for name, df_list in dataframes.items() %}
   {% set table_num = name | replace('table_', '') %}
   <select>
     <option value="{{ name }}">{{ name }}</option>
@@ -47,12 +47,12 @@
 
 <form action="/" method="POST" enctype="multipart/form-data">
   <input type="file" name="upload" value="1" onchange="this.form.submit()">
-  <select name="join_col">
+  <!-- <select name="join_col">
     {% for col in df.columns %}
     <option value="{{ col }}">{{ col }}</option>
     {% endfor %}
   </select>
-  <input name="join" value="{{table_num}}" type="submit">
+  <input name="join" value="{{table_num}}" type="submit"> -->
   <input name="delete" value="1" type="submit">
 </form>
 </div>
