@@ -65,11 +65,9 @@
             </form>
         </div>
     {% endfor %}
-    
-    <form action="/" method="POST" style="margin-top: 20px;">
-        <input name="add_table" value="Add New Table" type="submit">
-    </form>
-
+<form action="{{url_for('upload_file')}}" method="POST" enctype="multipart/form-data" style="margin-top: 20px;">
+    <input name="add_table" value="Add New Table" type="submit">
+</form>
 {% else %}
     <div class="table-container">
         <h3>No tables found.</h3>

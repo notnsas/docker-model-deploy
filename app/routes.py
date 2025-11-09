@@ -136,8 +136,9 @@ def upload_file():
         # dataframes.append([df1, df2])
         print('gurt1')
         print(f'df : {dataframes}')
-        file = request.files['upload']
-        if file:
+        
+        if 'upload' in request.files: 
+            file = request.files['upload']
             if 'table_1' in dataframes:
                 print(f"Length of table_1: {len(dataframes['table_1'])}")
 
@@ -221,7 +222,8 @@ def upload_file():
             # e.g., merged_df = perform_join(dataframes[table_num], sorted_join_cols)
         # if 'action' in request.form:
 
-
+        if 'add_table' in request.form:
+            print('bababoi')
 
     return render_template('uploud.html', pred_class=pred_class, dataframes=dataframes)
 
