@@ -112,71 +112,42 @@ def download_file(name):
 @app.route("/prediction/<file>")
 def prediction(file):
     print("mulai")
-    # file = request.args.get("file")
-    # file_path = os.path.join(app.config["UPLOAD_FOLDER"], file)
-    # file = request.args.get("file")
     print(f"file : {file}")
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], file)
 
-    df = pd.read_excel(file_path)
+    df = pd.read_csv(file_path)
+    print(f"len :{len(df)}")
     df = inference(df)
-
-    df.to_excel("data/fraud_with_prediction.xlsx", index=False)
-    filename = secure_filename("data/fraud_with_prediction.csv")
+    print(f"len after inf :{len(df)}")
+    # try:
+    # path = "data/fraud_with_prediction.xlsx"
+    #     df.to_excel("data/fraud_with_prediction.xlsx", index=False)
+    # except:
+    df.to_csv("data/fraud_with_prediction.csv", index=False)
     print(f"app config :{app.config["UPLOAD_FOLDER"]}")
     # download_file(name="fraud_with_prediction.xlsx")
     # redirect(url_for("download_file", name=filename))
-    return redirect(url_for("download_file", name="fraud_with_prediction.xlsx"))
+    return redirect(url_for("download_file", name="fraud_with_prediction.csv"))
 
 
 @app.route("/", methods=["GET", "POST"])
 def upload_file():
     pred_class = "None"
     if request.method == "POST":
-        print(f"request.form: {request.form}")
-        print(f"request.files: {request.files}")
-        button_value = request.form.get("action")
-        join_button = request.form.get("join")
-        print(f"join_button : {join_button}")
-        # if button_value == "Upload":
-        #     print('ada uploud')
-        #     # check if the post request has the file part
-        #     if 'file' not in request.files:
-        #         flash('No file part')
-        #         return redirect(request.url)
-        #     file = request.files['file']
-        #     print('file udh bs')
-        #     # If the user does not select a file, the browser submits an
-        #     # empty file without a filename.
-        #     if file.filename == '':
-        #         flash('No selected file')
-        #         return redirect(request.url)
-        #     if file and allowed_file(file.filename):
-        #         filename = secure_filename(file.filename)
-        #         print(app.config['UPLOAD_FOLDER'])
-        #         file.save(os.path.join(app.config['UPLOAD_FOLDER'], filename))
-        #         return redirect(url_for('prediction', file=filename))
-        #         # prediction(file=filename)
-        print(f"button_value :{button_value}")
-        if button_value == "submit":
+        if "upload_form" in request.form:
+            # if button_value == "submit":
             data = request.json
             print(f"data: {data}")
 
             amount = float(data.get("amount"))
             location = str(data.get("location"))
-            # petal_length = float(data.get("petal_length"))
-            # petal_width = float(data.get("petal_width"))
 
             print(f"amount : {amount}")
-            # model = joblib.load('ml_model/random_forest_iris.pkl')
+
             features = np.array([[amount, location]])
-            # pred_class_num = model.predict(features)
             pred_class_num = inference(features)
             species_map = {0: "Not Fraud", 1: "Fraud"}
             pred_class = species_map.get(pred_class_num, "Unknown")
-
-        print("gurt1")
-        # print(f'df : {dataframes}')
 
         if "upload" in request.files:
             file = request.files["upload"]
@@ -274,23 +245,27 @@ def upload_file():
                 new_key = f"table_{i - 1}"
                 if old_key in dataframes:
                     dataframes[new_key] = dataframes.pop(old_key)
-        if "action" in request.form:
-            preprocess = Preprocess(dataframes)
-            df_concat = preprocess.preprocessing()
-            print("concat")
-            # Ngecek valid apa ga
-            validator = Pandantic(schema=Fraud)
-            print("valid")
-            # Pengecekan
-            df_concat = validator.validate(dataframe=df_concat, errors="skip")
 
-            print(df_concat)
-            # Save df_concat temporarily
-            temp_path = os.path.join(app.config["UPLOAD_FOLDER"], "temp_input.xlsx")
-            df_concat.to_excel(temp_path, index=False)
+        if "upload_dataset" in request.form:
+            try:
+                preprocess = Preprocess(dataframes)
+                df_concat = preprocess.preprocessing()
+                print("concat")
+                # Ngecek valid apa ga
+                validator = Pandantic(schema=Fraud)
+                print("valid")
+                # Pengecekan
+                df_concat = validator.validate(dataframe=df_concat, errors="skip")
 
-            # Redirect and pass the filename
-            return redirect(url_for("prediction", file="temp_input.xlsx"))
+                print(df_concat)
+                # Save df_concat temporarily
+                temp_path = os.path.join(app.config["UPLOAD_FOLDER"], "temp_input.csv")
+                df_concat.to_csv(temp_path, index=False)
+
+                # Redirect and pass the filename
+                return redirect(url_for("prediction", file="temp_input.csv"))
+            except:
+                pass
     return render_template("uploud.html", pred_class=pred_class, dataframes=dataframes)
 
 
