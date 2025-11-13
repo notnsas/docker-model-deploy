@@ -264,8 +264,8 @@ def upload_file():
 
                 # Redirect and pass the filename
                 return redirect(url_for("prediction", file="temp_input.csv"))
-            except:
-                pass
+            except Exception as e:
+                print(f"Error: {e}")
     return render_template("uploud.html", pred_class=pred_class, dataframes=dataframes)
 
 
