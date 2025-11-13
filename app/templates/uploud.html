@@ -23,9 +23,8 @@
   {% for name, df_list in dataframes.items() %}
   {% set table_num = name | replace('table_', '') %}
 
-  <div class="table-container max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden p-5" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px;">
-
-    <h3>Table {{ table_num }}</h3>
+  <div class="table-container max-w-md mx-auto mt-10 bg-white shadow-lg rounded-lg overflow-hidden p-3" style="border: 1px solid #ccc; padding: 10px; margin-bottom: 15px;">
+    <div class="block bg-black max-w-md -m-3 p-2 mb-2 text-base font-medium text-center text-white"><h3>Table {{ table_num }}</h3></div>
 
     <label for="df_select_{{ table_num }}">DataFrames in this table:</label>
     <select id="df_select_{{ table_num }}" name="selected_dataframe">
@@ -50,7 +49,7 @@
 
       <hr>
 
-      <h4>Join Configuration</h4>
+      <h4 class="mb-3 block text-base font-medium text-[#07074D]">Join Configuration</h4>
       <p>Select a join column from each DataFrame:</p>
 
       {% for df in df_list %}
