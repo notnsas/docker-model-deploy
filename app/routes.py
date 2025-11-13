@@ -124,7 +124,7 @@ def prediction(file):
     #     df.to_excel("data/fraud_with_prediction.xlsx", index=False)
     # except:
     df.to_csv("data/fraud_with_prediction.csv", index=False)
-    print(f"app config :{app.config["UPLOAD_FOLDER"]}")
+    # print(f"app config :{app.config["UPLOAD_FOLDER"]}")
     # download_file(name="fraud_with_prediction.xlsx")
     # redirect(url_for("download_file", name=filename))
     return redirect(url_for("download_file", name="fraud_with_prediction.csv"))
