@@ -141,12 +141,24 @@ class Preprocess:
                 self.dataframes[name] = [df]
 
     def validation(self):
+        # Ngecek length dari dataframes
         for name, df in self.dataframes.items():
             if len(df) > 1:
-                return False
+                return "Pastikan dalam table cuma ada 1 dataframe, kalau belum join kolom atau hapus table"
+
+        # Ngecek ada yg missing apa ga
+        required = ["amount", "location"]
+
+        for name, df in self.dataframes.items():
+            for col in required:
+                if col not in df.columns:
+                    return "Missing column: " + col
+        return True
 
     def preprocessing(self):
-        self.validation()
+        valid = self.validation()
+        if valid != True:
+            return valid
 
         self.feature_extraction()
 
