@@ -110,7 +110,7 @@ Cara ini digunakan jika kamu ingin menjalankan aplikasi langsung dari source cod
 
 Mode ini digunakan untuk memproses banyak data sekaligus dari file.
 
-**(https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131003.png)**
+**(https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20143809.png)**
 
 1.  Scroll bagian Upload yaitu diatas.
 2.  Klik **"Upload First File"** untuk meng-upload file data pertamamu (CSV/Excel).
