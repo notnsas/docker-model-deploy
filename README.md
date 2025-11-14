@@ -4,7 +4,7 @@ Proyek ini adalah aplikasi web sederhana untuk mendemonstrasikan deployment mode
 
 Aplikasi ini dibangun menggunakan **Flask** untuk backend, **Tailwind CSS** untuk frontend, dan di-deploy dalam container **Docker**.
 
-**(Di sini tempat kamu tambahkan gambar/screenshot utama aplikasi kamu)**
+![Foto aplikasi](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20143809.png)
 
 ## Fitur
 
@@ -99,7 +99,7 @@ Cara ini digunakan jika kamu ingin menjalankan aplikasi langsung dari source cod
 
 ### Mode Realtime
 
-**(Tambahkan screenshot untuk mode realtime di sini)**
+![Foto mode realtime](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20130711.png)
 
 1.  Buka aplikasi di browser.
 2.  Scroll ke bagian Realtime di bawah.
@@ -114,18 +114,22 @@ Mode ini digunakan untuk memproses banyak data sekaligus dari file.
 
 1.  Scroll bagian Upload yaitu diatas.
 2.  Klik **"Upload First File"** untuk meng-upload file data pertamamu (CSV/Excel).
+![Foto upload first file](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131003.png)
 3.  **(Opsional) Jika data terpisah di file lain:**
       * Klik **"Add Another File"** untuk menambahkan file kedua (atau ketiga, dst.). Ini berguna jika kamu memiliki data yang perlu digabung, misalnya data transaksi di satu file dan data customer di file lain.
+![Foto tabel](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131048.png)
 4.  **(Opsional) Konfigurasi Join:**
       * Jika kamu meng-upload lebih dari satu file, kamu perlu mengatur konfigurasinya di bagian **"Join Configuration"**.
       * Pilih "Table" (file) mana yang ingin kamu gabungkan.
       * Tentukan **kolom kunci** (common column) dari kedua table yang akan digunakan sebagai dasar join (Contoh: `customer_id` di file A dan `customer_id` di file B).
       * Klik **"Set Join Columns"** untuk mengkonfirmasi.
+![Foto set join columns][https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131126.png]
+![Foto set join columns][https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131157.png]
 5.  Kamu bisa menambah table lain dengan **"Add New Table"** atau menghapus dengan **"Delete Table"**.
 6.  **Dapatkan Prediksi:**
-      * Setelah semua file di-upload dan konfigurasi join (jika ada) selesai, klik tombol proses/upload (misalnya "Get Prediction" atau "Upload").
+      * Setelah semua file di-upload dan konfigurasi join (jika ada) selesai, klik tombol  atau "Upload Dataset
       * Aplikasi akan memproses data dan memberikanmu link untuk mengunduh hasil prediksi dalam format CSV/Excel.
-
+![Foto upload](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131332.png)
 ### Contoh Data untuk Mode Batch
 
 Kamu bisa mencoba fungsionalitas upload batch menggunakan contoh dataset di link Google Drive berikut:
