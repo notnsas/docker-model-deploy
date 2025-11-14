@@ -166,22 +166,30 @@ def prediction(file):
     # Dapetin file path
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], file)
 
-    # Read dan inference
-    df = pd.read_csv(file_path)
+    file_ext = os.path.splitext(file_path)[1].lower()
+
+    if file_ext in [".csv"]:
+        df = pd.read_csv(file_path)
+    elif file_ext in [".xls", ".xlsx"]:
+        df = pd.read_excel(file_path)
+    else:
+        raise ValueError(f"Unsupported file type: {file_ext}")
+
     n = len(df)
     print(f"len :{len(df)}")
     df = inference(df)
     print(f"len after inf :{len(df)}")
 
     # Kalau terlalu besar rownya excel ga mampu
-    if n > 1000000:
+    if n < 1000000:
         path = "data/fraud_with_prediction.xlsx"
         df.to_excel(path, index=False)
     else:
         path = "data/fraud_with_prediction.csv"
         df.to_csv(path, index=False)
 
-    return redirect(url_for("download_file", name="fraud_with_prediction.csv"))
+    filename = os.path.basename(path)
+    return redirect(url_for("download_file", name=filename))
 
 
 @app.route("/", methods=["GET", "POST"])
@@ -292,30 +300,31 @@ def upload_file():
 
         # Upload semua dataset di table dan inference
         if "upload_dataset" in request.form:
-            try:
-                preprocess = Preprocess(dataframes)
-                df_concat = preprocess.preprocessing()
-                print("concat")
-                # Ngecek valid apa ga
-                validator = Pandantic(schema=Fraud)
-                print("valid")
-                # Pengecekan
-                df_concat = validator.validate(dataframe=df_concat, errors="skip")
+            # try:
+            preprocess = Preprocess(dataframes)
+            df_concat = preprocess.preprocessing()
+            print("concat")
+            # Ngecek valid apa ga
+            validator = Pandantic(schema=Fraud)
+            print("valid")
+            if isinstance(df_concat, str):
+                flash(df_concat)
+                return redirect(request.url)
 
-                # Ngecek kalau ga valid bakal print apa ga validnya
-                if isinstance(df_concat, str):
-                    flash("df_concat")
-                    return redirect(request.url)
+            # Pengecekan
+            df_concat = validator.validate(dataframe=df_concat, errors="skip")
+            print("Check valid print ga")
+            # Ngecek kalau ga valid bakal print apa ga validnya
 
-                print(df_concat)
-                # Save df_concat temporarily
-                temp_path = os.path.join(app.config["UPLOAD_FOLDER"], "temp_input.csv")
-                df_concat.to_csv(temp_path, index=False)
+            print(df_concat)
+            # Save df_concat temporarily
+            temp_path = os.path.join(app.config["UPLOAD_FOLDER"], "temp_input.csv")
+            df_concat.to_csv(temp_path, index=False)
 
-                # Redirect and pass the filename
-                return redirect(url_for("prediction", file="temp_input.csv"))
-            except Exception as e:
-                print(f"Error: {e}")
+            # Redirect and pass the filename
+            return redirect(url_for("prediction", file="temp_input.csv"))
+            # except Exception as e:
+            #     print(f"Error: {e}")
     return render_template(
         "uploud.html", pred_class=pred_class, dataframes=dataframes, options=options
     )

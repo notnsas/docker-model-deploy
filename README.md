@@ -102,7 +102,7 @@ Cara ini digunakan jika kamu ingin menjalankan aplikasi langsung dari source cod
 **(Tambahkan screenshot untuk mode realtime di sini)**
 
 1.  Buka aplikasi di browser.
-2.  Pilih tab atau bagian "Realtime".
+2.  Scroll ke bagian Realtime di bawah.
 3.  Masukkan data yang diminta pada form (Contoh: Amount dan Location).
 4.  Klik tombol "Predict" untuk melihat hasil prediksi.
 
@@ -112,7 +112,7 @@ Mode ini digunakan untuk memproses banyak data sekaligus dari file.
 
 **(Tambahkan screenshot untuk mode batch/upload di sini)**
 
-1.  Pilih tab atau bagian "Upload".
+1.  Scroll bagian Upload yaitu diatas.
 2.  Klik **"Upload First File"** untuk meng-upload file data pertamamu (CSV/Excel).
 3.  **(Opsional) Jika data terpisah di file lain:**
       * Klik **"Add Another File"** untuk menambahkan file kedua (atau ketiga, dst.). Ini berguna jika kamu memiliki data yang perlu digabung, misalnya data transaksi di satu file dan data customer di file lain.

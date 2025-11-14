@@ -75,7 +75,7 @@ class Preprocess:
             "Virgin Islands, U.S.": "VI",
         }
         us_reverse = {value: key for key, value in us_state_to_abbrev.items()}
-        return us_reverse[x]
+        return us_reverse.get(x, x)
 
     def combining(self):
         column_mapping = {
@@ -124,21 +124,30 @@ class Preprocess:
         for name, df in self.dataframes.items():
             df = df[0]
             list_col = df.columns.tolist()
-            if "customerBillingAddress" in list_col:
+            print(f"in df.columns : {df.columns}")
+            if (
+                "customerBillingAddress" in list_col
+                and "StateName" not in df.columns
+                and "location" not in df.columns
+            ):
+                print("jalanin f.ext")
                 df_new = (
                     df["customerBillingAddress"]
                     .apply(self.__class__.parse_address)
                     .apply(pd.Series)[0]
                     .apply(pd.Series)
                 )
+
                 df = pd.concat([df, df_new], axis=1)
                 self.dataframes[name] = [df]
-
+                print(f"new df col : {self.dataframes[name][0].columns:}")
+            list_col = df.columns.tolist()
             common_items = list(set(["StateName", "state"]).intersection(list_col))
             if common_items:
                 df[common_items] = df[common_items].map(self.__class__.state_transform)
                 # df3['state'] = df3['state'].map(us_reverse)
                 self.dataframes[name] = [df]
+            print(df)
 
     def validation(self):
         # Ngecek length dari dataframes
@@ -146,22 +155,50 @@ class Preprocess:
             if len(df) > 1:
                 return "Pastikan dalam table cuma ada 1 dataframe, kalau belum join kolom atau hapus table"
 
-        # Ngecek ada yg missing apa ga
-        required = ["amount", "location"]
+        # Mapping from possible column names to standardized field names
+        column_mapping = {
+            "Amount": "amount",
+            "transactionAmount": "amount",
+            "amt": "amount",
+            "Location": "location",
+            "StateName": "location",
+            "state": "location",
+            "IsFraud": "is_fraud",
+            "Fraud": "is_fraud",
+            "Fraudulent": "is_fraud",
+        }
 
-        for name, df in self.dataframes.items():
-            for col in required:
-                if col not in df.columns:
-                    return "Missing column: " + col
+        # The required standardized fields
+        required_fields = ["amount", "location", "is_fraud"]
+
+        # Check each dataframe
+        for name, df_list in self.dataframes.items():
+            for i, df in enumerate(df_list):
+                # Map columns in df to standardized fields
+                # Map columns to standardized names, but keep already-standardized columns
+                mapped_cols = set(
+                    column_mapping.get(col, col)  # if col not in mapping, keep as-is
+                    for col in df.columns
+                )
+
+                # Check missing required fields
+                missing_fields = [
+                    field for field in required_fields if field not in mapped_cols
+                ]
+
+                if missing_fields:
+                    return f"Missing required field(s) in DataFrame {name}[{i}]: {', '.join(missing_fields)}"
+
         return True
 
     def preprocessing(self):
+        print("blmfex")
+        self.feature_extraction()
+        print("udh f.ext")
         valid = self.validation()
         if valid != True:
             return valid
-
-        self.feature_extraction()
-
+        print("valid")
         df_concat = self.combining()
 
         return df_concat
