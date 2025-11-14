@@ -116,15 +116,15 @@ Mode ini digunakan untuk memproses banyak data sekaligus dari file.
 2.  Klik **"Upload First File"** untuk meng-upload file data pertamamu (CSV/Excel).
 ![Foto upload first file](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131003.png)
 3.  **(Opsional) Jika data terpisah di file lain:**
-      * Klik **"Add Another File"** untuk menambahkan file kedua (atau ketiga, dst.). Ini berguna jika kamu memiliki data yang perlu digabung, misalnya data transaksi di satu file dan data customer di file lain.
+      * Klik **"Chose file"** di Add another DataFrame to Table-X untuk menambahkan file kedua (atau ketiga, dst.). Ini berguna jika kamu memiliki data yang perlu digabung, misalnya data transaksi di satu file dan data customer di file lain.
 ![Foto tabel](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131048.png)
 4.  **(Opsional) Konfigurasi Join:**
       * Jika kamu meng-upload lebih dari satu file, kamu perlu mengatur konfigurasinya di bagian **"Join Configuration"**.
       * Pilih "Table" (file) mana yang ingin kamu gabungkan.
       * Tentukan **kolom kunci** (common column) dari kedua table yang akan digunakan sebagai dasar join (Contoh: `customer_id` di file A dan `customer_id` di file B).
       * Klik **"Set Join Columns"** untuk mengkonfirmasi.
-![Foto set join columns][https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131126.png]
-![Foto set join columns][https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131157.png]
+![Foto set join columns](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131126.png)
+![Foto set join columns](https://github.com/notnsas/docker-model-deploy/blob/main/assets/Screenshot%202025-11-14%20131157.png)
 5.  Kamu bisa menambah table lain dengan **"Add New Table"** atau menghapus dengan **"Delete Table"**.
 6.  **Dapatkan Prediksi:**
       * Setelah semua file di-upload dan konfigurasi join (jika ada) selesai, klik tombol  atau "Upload Dataset
