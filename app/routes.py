@@ -127,6 +127,12 @@ def inference(data):
             return data["is_fraud_prediction"][0]
         return data
 
+@app.route('/ping', methods=['GET'])
+def ping():
+    return jsonify({
+        "status": "success",
+        "message": "Server is running!"
+    })
 
 @app.route("/api/prediction", methods=["POST"])
 def api_prediction():
