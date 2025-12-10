@@ -91,7 +91,8 @@ options = [
     "Alaska",
 ]
 
-pipeline = joblib.load("ml_model/logistic_regression_inference.joblib")
+model = joblib.load("ml_model/ensemble_model.joblib")
+preprocess = joblib.load("ml_model/preprocessor.joblib")
 
 
 def allowed_file(filename):
@@ -104,7 +105,11 @@ def inference(data):
         columns = ["amount", "location"]
 
         X = pd.DataFrame(data, columns=columns)
-        y = pipeline.predict(X)
+        X_processed = preprocess.transform(X)
+        print(f"X : {X_processed}")
+        print(X_processed.dtype)
+        y = model.predict(X_processed)
+
         return y[0]
     else:
         print("before drop")
@@ -113,7 +118,13 @@ def inference(data):
         else:
             X = data
         print("after")
-        data["is_fraud_prediction"] = pipeline.predict(X)
+        X_processed = preprocess.transform(X)
+        print(f"X : {X_processed}")
+        print(X_processed.dtype)
+        data["is_fraud_prediction"] = model.predict(X_processed)
+
+        if len(data["is_fraud_prediction"]) == 1:
+            return data["is_fraud_prediction"][0]
         return data
 
 
@@ -125,8 +136,10 @@ def api_prediction():
         print(f"data : {data}")
         amount = float(data.get("amount"))
         location = data.get("location")
-    except Exception as e:
-        flash(f"Error : {e}")
+        if amount is None or location is None:
+            return jsonify({"error": "Missing amount atau location"}), 400
+    except ValueError:
+        return jsonify({"error": "Amount harus nomor"}), 400
 
     # Ngecek valid apa ga pake pydantics
     try:
@@ -138,7 +151,7 @@ def api_prediction():
         flash(e)
 
     # Running modelnya
-    features = np.array([[amount, location]])
+    features = pd.DataFrame([{"amount": amount, "location": location}])
     print("feat")
     pred_class_num = inference(features)
 
